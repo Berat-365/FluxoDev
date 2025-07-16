@@ -241,7 +241,7 @@
         .favorite-item {
             position: relative;
             background-color: #3a3b3c;
-            border-radius: 16px;
+            border-radius: 20px;
             padding: 12px 10px 16px;
             width: 90px;
             cursor: move;
@@ -258,7 +258,7 @@
         .favorite-item img {
             width: 32px;
             height: 32px;
-            border-radius: 5px;
+            border-radius: 6px;
             background: rgba(255, 255, 255, 0.1);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
@@ -351,7 +351,7 @@
             background-color: #303134;
             color: white;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 15px;
             width: 320px;
             text-align: left;
             z-index: 1005;
@@ -410,7 +410,7 @@
             width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border-radius: 20px;
+            border-radius: 10px;
             border: none;
             background-color: #202124;
             color: white;
@@ -481,7 +481,7 @@
             gap: 10px;
             cursor: pointer;
             padding: 5px;
-            border-radius: 20px;
+            border-radius: 15px;
             background-color: #202124;
             transition: background-color 0.2s;
         }
@@ -498,7 +498,7 @@
             width: 50px;
             height: 50px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 10px;
         }
         #recentBgList .bg-preview span {
             font-size: 12px;
@@ -546,7 +546,7 @@
         #historyList .history-item {
             padding: 10px;
             background-color: #202124;
-            border-radius: 20px;
+            border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.2s;
         }
@@ -636,7 +636,7 @@
             transform: translate(-50%, -50%);
             background-color: #303134;
             padding: 20px;
-            border-radius: 18px;
+            border-radius: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             z-index: 10000;
             color: #e8eaed;
@@ -749,7 +749,7 @@
 </head>
 <body>
     <div class="weather-widget" id="weatherWidget" onclick="window.open('https://wttr.in', '_blank')">Yükleniyor...</div>
-    <div class="info-bar" id="infoBar">Fluxo 3.1,2 BetaPreview | <span id="languageDisplay">Türkçe</span></div>
+    <div class="info-bar" id="infoBar">Fluxo 3.1,2 | Vanilla - BetaPreview | <span id="languageDisplay">Türkçe</span></div>
     <div class="url-sidebar" id="urlSidebar"></div>
     <button id="settingsButton">
         <img id="settingsIcon" src="ico/settings.png" alt="Ayarlar">
@@ -1437,8 +1437,8 @@
                 return;
             }
             fetchWeather();
-            const bg = localStorage.getItem("bgUrl") || "";
-            const f = localStorage.getItem("font") || "'Inter', sans-serif"; // Varsayılan fontu Inter olarak güncelledik
+            const bg = localStorage.getItem("bgUrl") || "https://images.pexels.com/photos/19161533/pexels-photo-19161533.jpeg";
+            const f = localStorage.getItem("font") || "'open-sans', sans-serif"; 
             const t = localStorage.getItem("theme") || "dark";
             const c = localStorage.getItem("accentColor") || "#00bcd4";
             const l = localStorage.getItem("language") || "tr";
@@ -1571,14 +1571,19 @@ function fetchSuggestions(query) {
     };
     const script = document.createElement("script");
     script.src = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodedQuery}&jsonp=${callbackName}`;
-    document.body.appendChild(script);
+    script.onload = () => {
+        // Remove script after load (success or not, callback will handle data)
+        script.remove();
+    };
     script.onerror = () => {
         console.error("Öneri alınamadı: Script yüklenemedi");
         const suggestionsBox = document.getElementById("suggestions");
         suggestionsBox.innerHTML = `<li style="padding: 12px; color: #ff4444;">${translations[localStorage.getItem("language") || "tr"].noSuggestions}</li>`;
         suggestionsBox.style.display = "block";
         delete window[callbackName];
+        script.remove();
     };
+    document.body.appendChild(script);
 }
 const debouncedFetchSuggestions = debounce(fetchSuggestions, 200);
 
